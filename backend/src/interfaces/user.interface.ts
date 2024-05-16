@@ -5,8 +5,9 @@ export interface User {
   password: string,
   rePassword?: string,
   name?: string | null,
-  age?: number | null,
-  phoneNumber?: number | null,
+  age?: string | null,
+  phoneNumber?: string | null,
   avatarImage?: string | null,
-  state?: string | null
+  state?: string | null,
+  dateOfRegister: Date
 }

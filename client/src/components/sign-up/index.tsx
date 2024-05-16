@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios'
 import { FcGoogle } from 'react-icons/fc';
 import { Alert } from '../alert';
+import { signInWithGoogle } from '../../config/firebase-config';
 
 type Props = {
   setSelected: (value: string) => void
@@ -15,7 +16,7 @@ type AlertData = {
   type: string
 }
 
-type SignUp = {
+interface SignUpForm  {
   username: string,
   email: string,
   password: string,
@@ -25,7 +26,7 @@ type SignUp = {
 export const SignUp: React.FC<Props> = ({setSelected}) => {
   const [alert, setAlert] = useState<AlertData | null>(null)
 
-  const { handleSubmit, control, formState: { errors} } = useForm<SignUp>({
+  const { handleSubmit, control, formState: { errors} } = useForm<SignUpForm>({
     mode: 'onChange',
     reValidateMode: 'onBlur',
     defaultValues: {
@@ -36,9 +37,11 @@ export const SignUp: React.FC<Props> = ({setSelected}) => {
     }
   })
 
-  const onSubmit = async (data: SignUp) => {
+  const onSubmit = async (data: SignUpForm) => {
     try {
-      await axios.post('http://localhost:3000/user/register', data).then((res) => {
+      await axios.post('http://localhost:3000/user/register', data, {headers: {
+        'Content-Type': 'application/json'
+      }}).then((res) => {
         if(res.data?.error)
           setAlert({
             data: res.data?.error?.message,
@@ -63,6 +66,46 @@ export const SignUp: React.FC<Props> = ({setSelected}) => {
     }
   }
 
+  const handleGoogleSignUp = async () => {
+    try{
+      const result = await signInWithGoogle()
+      const user = result.user
+
+      const userData = {
+        username: user.displayName,
+        password: '',
+        email: user.email,
+        avatarImage: user.photoURL,
+        phoneNumber: user.phoneNumber || '',
+        name: '',
+        age: '',
+        state: 'user',
+      }
+
+      const response = await axios.post('http://localhost:3000/user/sign-up-with-google', userData, {headers: {
+        'Content-Type': 'application/json'
+      }}).then((res) => {
+        if(res.data?.error)
+          setAlert({
+            data: res.data?.error?.message,
+            type: 'error'
+          })
+        if(res.data?.success)
+          setAlert({
+            data: res.data?.success?.message,
+            type: 'success'
+          })
+      }).catch((err) => {
+        setAlert({
+          data: err.message,
+          type: 'error'
+        })
+      })
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <>
       <Card>
@@ -74,7 +117,7 @@ export const SignUp: React.FC<Props> = ({setSelected}) => {
           <Input control={control} name='rePassword' label="Password" placeholder="Enter repeat your password" type="password"/>
           <p className='self-center text-zinc-600'>Do you already have an account? <Link className='cursor-pointer' color='primary' onPress={() => setSelected('login')}>Login</Link></p>
           <Button fullWidth color="primary" type='submit'>Sign up</Button>
-          <Button fullWidth variant='ghost' color='primary' startContent={<FcGoogle className='text-2xl'/>}>Sign up with Google</Button>
+          <Button fullWidth variant='ghost' color='primary' startContent={<FcGoogle className='text-2xl'/>} onClick={handleGoogleSignUp}>Sign up with Google</Button>
         </form>
         </CardBody>
       </Card>

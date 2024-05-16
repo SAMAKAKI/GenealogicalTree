@@ -1,8 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from 'src/interfaces/user.interface';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -18,5 +17,16 @@ export class UserController {
   async getDocument(@Body() loginData: {password: string, usernameOrEmail: string}) {
     const { password, usernameOrEmail } = loginData
     return this.userService.loginUser(password, usernameOrEmail);
+  }
+
+  @Post('sign-up-with-google')
+  async createDocumentWithGoogle(@Body() data: User) {
+    return this.userService.signUpWithGoogle(data);
+  }
+
+  @Post('sign-in-with-google')
+  async getDocumentWithGoogle(@Body() loginData: {username: string, email: string}) {
+    const { username, email } = loginData
+    return this.userService.signInWithGoogle(username, email);
   }
 }

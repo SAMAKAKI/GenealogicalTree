@@ -19,7 +19,7 @@ function App() {
 
         <div className=" bg-blue-200 h-screen w-3/5 bg-opacity-80" style={{ flex: 5 }}>
           <Routes>
-            <Route path="/auth"  element={<Auth />} />
+            <Route path="/auth"  element={<Auth />}/>
             <Route path="/home" element={<Home/>}/>
             <Route path="/tree" element={<Tree/>}/>
             <Route path="/settings" element={<Settings/>}/>

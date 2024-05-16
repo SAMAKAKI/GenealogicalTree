@@ -5,7 +5,7 @@ import { AdminService } from '../admin/admin.service';
 import { UserService } from './user.service';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv'
-import { JwtStrategy } from '../strategy/jwt.strategy';
+import { JwtStrategy } from '../strategies/jwt.strategy';
 
 dotenv.config()
 @Module({
