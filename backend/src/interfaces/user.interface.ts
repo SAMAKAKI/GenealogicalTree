@@ -8,4 +8,5 @@ export interface User {
   age?: number | null,
   phoneNumber?: number | null,
   avatarImage?: string | null,
+  state?: string | null
 }

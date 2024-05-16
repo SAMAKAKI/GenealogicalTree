@@ -28,7 +28,8 @@ export class UserService {
       const userData: User = {
         username: data.username,
         email: data.email,
-        password
+        password,
+        state: 'user'
       }
       const docRef = await firestore.collection('users').add(userData);
       
@@ -61,12 +62,15 @@ export class UserService {
       const comparePassword = await bcrypt.compare(password, userData.password)
 
       if(comparePassword){
-        return await this.jwtService.signAsync({
+         const token = await this.jwtService.signAsync({
           id: userId,
           username: userData.username,
           password: userData.password,
-          email: userData.email
+          email: userData.email,
+          state: userData.state
         })
+
+        return { success: { message: "Successfully logged", token} }
       } else
         return { error: { message: "Incorrect password try again" } }
         

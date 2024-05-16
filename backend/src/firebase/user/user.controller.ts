@@ -8,7 +8,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
   constructor(private readonly userService: UserService){}
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Post('register')
   async createDocument(@Body() data: User) {
     return this.userService.registerUser(data);
