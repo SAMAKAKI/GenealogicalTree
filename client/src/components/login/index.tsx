@@ -5,28 +5,20 @@ import { useForm } from 'react-hook-form';
 import { Input } from '../input'
 import { FcGoogle } from 'react-icons/fc';
 import { Alert } from '../alert';
-import { useGuardAuth } from '../../providers/GuardAuthProvider';
 import { signInWithGoogle } from '../../config/firebase-config';
+import { useLoginMutation } from '../../app/services/userApi';
+import { AlertData, LoginType } from '../../types';
+import { useNavigate } from 'react-router-dom';
+import { useGuardAuth } from '../../providers/GuardAuthProvider';
 
 type Props = {
   setSelected: (value: string) => void
 }
 
-type AlertData = {
-  data: string,
-  type: string
-}
-
-type Login = {
-  usernameOrEmail: string,
-  password: string,
-}
-
 export const Login: React.FC<Props> = ({setSelected}) => {
   const { login } = useGuardAuth()
-
   const [alert, setAlert] = useState<AlertData | null>(null)
-  const { handleSubmit, control, formState: { errors} } = useForm<Login>({
+  const { handleSubmit, control, formState: { errors} } = useForm<LoginType>({
     mode: 'onChange',
     reValidateMode: 'onBlur',
     defaultValues: {
@@ -34,9 +26,13 @@ export const Login: React.FC<Props> = ({setSelected}) => {
       password: '',
     }
   })
+  // const [login, { isLoading }] = useLoginMutation()
+  const navigate = useNavigate()
 
-  const onSubmit = async (data: Login) => {
+  const onSubmit = async (data: LoginType) => {
     try {
+      // console.log(await login(data).unwrap())
+
       await axios.post('http://localhost:3000/user/login', data, {headers: {
         'Content-Type': 'application/json'
       }}).then((res) => {

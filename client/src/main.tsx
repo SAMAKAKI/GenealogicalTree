@@ -5,15 +5,19 @@ import './index.css'
 import {NextUIProvider} from "@nextui-org/react";
 import {BrowserRouter} from "react-router-dom"
 import { GuardAuthProvider } from './providers/GuardAuthProvider.tsx';
+import { Provider } from 'react-redux';
+import { store } from './app/store.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <NextUIProvider>
-      <BrowserRouter>
-        <GuardAuthProvider>
-          <App />
-        </GuardAuthProvider>
-      </BrowserRouter>
-    </NextUIProvider>
+    <Provider store={store}>
+      <NextUIProvider>
+        <BrowserRouter>
+          <GuardAuthProvider>
+            <App />
+          </GuardAuthProvider>
+        </BrowserRouter>
+      </NextUIProvider>
+    </Provider>
   </React.StrictMode>,
 )

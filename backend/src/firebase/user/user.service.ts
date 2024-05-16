@@ -4,7 +4,7 @@ import { AdminService } from '../admin/admin.service';
 import { User } from 'src/interfaces/user.interface';
 import * as bcrypt from 'bcryptjs'
 import { JwtService } from '@nestjs/jwt';
-import { randomBytes } from 'crypto';
+import { Response } from 'express'
 
 @Injectable()
 export class UserService {
@@ -76,7 +76,7 @@ export class UserService {
           state: userData.state
         })
 
-        return { success: { message: "Successfully logged", token} }
+        return { success: { message: "Successfully logged", token}}
       } else
         return { error: { message: "Incorrect password try again" } }
         
