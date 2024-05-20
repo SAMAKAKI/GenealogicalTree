@@ -2,6 +2,7 @@ import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import { api } from './services/api'
 import { listenerMiddleware } from './middleware/auth'
 import user from './slicers/userSlice'
+import { listenerGoogleMiddleware } from './middleware/authGoogle'
 
 export const store = configureStore({
   reducer: {
@@ -9,7 +10,7 @@ export const store = configureStore({
     user
   },
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(api.middleware).prepend(listenerMiddleware.middleware)
+    return getDefaultMiddleware().concat(api.middleware).prepend(listenerMiddleware.middleware).prepend(listenerGoogleMiddleware.middleware)
   }
 })
 

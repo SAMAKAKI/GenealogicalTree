@@ -4,7 +4,6 @@ import { AdminService } from '../admin/admin.service';
 import { User } from 'src/interfaces/user.interface';
 import * as bcrypt from 'bcryptjs'
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express'
 
 @Injectable()
 export class UserService {
@@ -16,14 +15,14 @@ export class UserService {
     try{
       const username = await firestore.collection('users').where('username', '==', data.username).get()
       if(!username.empty)
-        return { error: { message: "This username is already in use" }}
+        return { data: { success: {message: ''}, error: { message: "This username is already in use" }}}
 
       const email = await firestore.collection('users').where('email', '==', data.email).get()
       if(!email.empty)
-        return { error: { message: "This email is already in use" } }
+        return { data: { success: {message: ''}, error: { message: "This email is already in use" } }}
 
       if(data.rePassword !== data.password)
-        return { error: { message: "Password and Repeat password is not match" } }
+        return { data: { success: {message: ''}, error: { message: "Password and Repeat password is not match" }}}
       
       const password = await bcrypt.hash(data.password, 10)
       const userData: User = {
@@ -40,11 +39,11 @@ export class UserService {
       const docRef = await firestore.collection('users').add(userData);
       
       if(docRef.id)
-        return { success: { message: "Successfully registered" } }
+        return { data: {success: { message: "Successfully registered" }, error: { message: '' }}}
       else
-        return { error: { message: "Something went wrong" } }
+        return { data: { success: {message: ''}, error: { message: "Something went wrong" }}}
     } catch (error){
-      return { error: { message: "An error occurred while registering the user" }};
+      return { data: { success: {message: ''}, error: { message: "An error occurred while registering the user" }}}
     }
   }
 
@@ -76,12 +75,12 @@ export class UserService {
           state: userData.state
         })
 
-        return { success: { message: "Successfully logged", token}}
+        return { data: {success: { message: "Successfully logged", token}, error: {message: ''}}}
       } else
-        return { error: { message: "Incorrect password try again" } }
+        return { data: { success: {message: ''}, error: { message: "Incorrect password try again" }}}
         
     } catch (error) {
-      return { error: { message: `An error occurred while logging the user ${error}` } }
+      return { data: { success: {message: ''}, error: { message: `An error occurred while logging the user ${error}` }}}
     }
   }
 
@@ -91,11 +90,11 @@ export class UserService {
     try{
       const username = await firestore.collection('users').where('username', '==', data.username).get()
       if(!username.empty)
-        return { error: { message: "This username is already in use" }}
+        return { data: { success: {message: ''}, error: { message: "This username is already in use" }}}
 
       const email = await firestore.collection('users').where('email', '==', data.email).get()
       if(!email.empty)
-        return { error: { message: "This email is already in use" } }
+        return { data: { success: {message: ''}, error: { message: "This email is already in use" }}}
 
       const passwordHash = await bcrypt.hash(`${data.username + data.email}`, 10)
       const userData: User = {
@@ -112,11 +111,11 @@ export class UserService {
       const docRef = await firestore.collection('users').add(userData);
       
       if(docRef.id)
-        return { success: { message: "Successfully registered" } }
+        return { data: {success: { message: "Successfully registered" }, error: {message: ''}}}
       else
-        return { error: { message: "Something went wrong" } }
+        return { data: {success: {message: ''}, error: { message: "Something went wrong" }}}
     } catch (error){
-      return { error: { message: "An error occurred while registering the user" }};
+      return { data: {success: {message: ''}, error: { message: "An error occurred while registering the user" }}}
     }
     
   }
@@ -131,7 +130,7 @@ export class UserService {
       const users = [...userUsername.docs, ...userEmail.docs]
 
       if(users.length === 0)
-        return { error: { message: "Incorrect email or username" } }
+        return { data: { success: {message: ''}, error: { message: "Incorrect email or username" }}}
 
       const user = users[0]
 
@@ -150,12 +149,12 @@ export class UserService {
           state: userData.state
         })
 
-        return { success: { message: "Successfully logged", token} }
+        return { data: {success: { message: "Successfully logged", token}, error: {message: ''}}}
       } else
-        return { error: { message: "Incorrect password try again" } }
+        return { data: { success: {message: ''}, error: { message: "Incorrect password try again" }}}
         
     } catch (error) {
-      return { error: { message: `An error occurred while logging the user ${error}` } }
+      return { data: { success: {message: ''}, error: { message: `An error occurred while logging the user ${error}` }}}
     }
     
   }

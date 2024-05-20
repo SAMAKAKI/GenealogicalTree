@@ -2,30 +2,21 @@ import React, { useState } from 'react'
 import {Card, CardBody, Button, Link} from "@nextui-org/react";
 import { Input } from '../input';
 import { useForm } from 'react-hook-form';
-import axios from 'axios'
 import { FcGoogle } from 'react-icons/fc';
 import { Alert } from '../alert';
 import { signInWithGoogle } from '../../config/firebase-config';
+import { AlertData, SignUpForm } from '../../types';
+import { useSignUpMutation, useSignUpWithGoogleMutation } from '../../app/services/userApi';
+import { User } from '../../interfaces/user.interface';
 
 type Props = {
   setSelected: (value: string) => void
 }
 
-type AlertData = {
-  data: string,
-  type: string
-}
-
-interface SignUpForm  {
-  username: string,
-  email: string,
-  password: string,
-  rePassword: string,
-}
-
 export const SignUp: React.FC<Props> = ({setSelected}) => {
   const [alert, setAlert] = useState<AlertData | null>(null)
-
+  const [signUp] = useSignUpMutation()
+  const [signUpWithGoogle] = useSignUpWithGoogleMutation()
   const { handleSubmit, control, formState: { errors} } = useForm<SignUpForm>({
     mode: 'onChange',
     reValidateMode: 'onBlur',
@@ -39,24 +30,21 @@ export const SignUp: React.FC<Props> = ({setSelected}) => {
 
   const onSubmit = async (data: SignUpForm) => {
     try {
-      await axios.post('http://localhost:3000/user/register', data, {headers: {
-        'Content-Type': 'application/json'
-      }}).then((res) => {
-        if(res.data?.error)
+      await signUp(data).unwrap().then((res) => {
+        if(res.data.success.message){
           setAlert({
-            data: res.data?.error?.message,
-            type: 'error'
-          })
-        if(res.data?.success)
-          setAlert({
-            data: res.data?.success?.message,
+            data: res.data.success.message,
             type: 'success'
           })
-      }).catch((err) => {
-        setAlert({
-          data: err.message,
-          type: 'error'
-        })
+          setTimeout(() => {
+            setSelected('login')
+          }, 1500)
+        }
+        if(res.data.error.message)
+          setAlert({
+            data: res.data.error.message,
+            type: 'error'
+          })
       })
     } catch (error) {
       setAlert({
@@ -71,7 +59,7 @@ export const SignUp: React.FC<Props> = ({setSelected}) => {
       const result = await signInWithGoogle()
       const user = result.user
 
-      const userData = {
+      const userData: User = {
         username: user.displayName,
         password: '',
         email: user.email,
@@ -82,27 +70,27 @@ export const SignUp: React.FC<Props> = ({setSelected}) => {
         state: 'user',
       }
 
-      const response = await axios.post('http://localhost:3000/user/sign-up-with-google', userData, {headers: {
-        'Content-Type': 'application/json'
-      }}).then((res) => {
-        if(res.data?.error)
+      await signUpWithGoogle(userData).unwrap().then((res) => {
+        if(res.data.success.message){
           setAlert({
-            data: res.data?.error?.message,
-            type: 'error'
-          })
-        if(res.data?.success)
-          setAlert({
-            data: res.data?.success?.message,
+            data: res.data.success.message,
             type: 'success'
           })
-      }).catch((err) => {
-        setAlert({
-          data: err.message,
-          type: 'error'
-        })
+          setTimeout(() => {
+            setSelected('login')
+          }, 1500)
+        }
+        if(res.data.error.message)
+          setAlert({
+            data: res.data.error.message,
+            type: 'error'
+          })
       })
     } catch (error) {
-      console.error(error);
+      setAlert({
+        data: 'Something went wrong',
+        type: 'error'
+      })
     }
   }
 

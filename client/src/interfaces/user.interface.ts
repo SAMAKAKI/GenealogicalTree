@@ -1,7 +1,6 @@
-/* eslint-disable prettier/prettier */
 export interface User {
-  username: string,
-  email: string,
+  username: string | null,
+  email: string | null,
   password: string,
   rePassword?: string,
   name?: string | null,
@@ -9,5 +8,5 @@ export interface User {
   phoneNumber?: string | null,
   avatarImage?: string | null,
   state?: string | null,
-  dateOfRegister: Date
+  dateOfRegister?: Date
 }

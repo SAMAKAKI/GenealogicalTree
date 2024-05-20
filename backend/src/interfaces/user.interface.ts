@@ -9,5 +9,5 @@ export interface User {
   phoneNumber?: string | null,
   avatarImage?: string | null,
   state?: string | null,
-  dateOfRegister: Date
+  dateOfRegister?: Date
 }

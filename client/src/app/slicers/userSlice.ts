@@ -16,11 +16,15 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    logout: () => initialState,
+    logout: (state) => {
+      state.isAuthenticated = false
+      state.token = ''
+      localStorage.removeItem('token')
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(userApi.endpoints.login.matchFulfilled, (state, action) => {
-      state.token = action.payload.value.token
+      state.token = action.payload.data.success.token
       state.isAuthenticated = true
     })
   }

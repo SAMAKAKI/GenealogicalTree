@@ -1,22 +1,19 @@
 import React, { useState } from 'react'
 import {Card, CardBody, Button, Link} from "@nextui-org/react";
-import axios from 'axios'
 import { useForm } from 'react-hook-form';
 import { Input } from '../input'
 import { FcGoogle } from 'react-icons/fc';
 import { Alert } from '../alert';
-import { signInWithGoogle } from '../../config/firebase-config';
-import { useLoginMutation } from '../../app/services/userApi';
+import { signInWithGoogle as signInWithGoogleFirebase } from '../../config/firebase-config';
+import { useLoginMutation, useSignInWithGoogleMutation } from '../../app/services/userApi';
 import { AlertData, LoginType } from '../../types';
 import { useNavigate } from 'react-router-dom';
-import { useGuardAuth } from '../../providers/GuardAuthProvider';
 
 type Props = {
   setSelected: (value: string) => void
 }
 
 export const Login: React.FC<Props> = ({setSelected}) => {
-  const { login } = useGuardAuth()
   const [alert, setAlert] = useState<AlertData | null>(null)
   const { handleSubmit, control, formState: { errors} } = useForm<LoginType>({
     mode: 'onChange',
@@ -26,32 +23,27 @@ export const Login: React.FC<Props> = ({setSelected}) => {
       password: '',
     }
   })
-  // const [login, { isLoading }] = useLoginMutation()
+  const [login] = useLoginMutation()
+  const [signInWithGoogle] = useSignInWithGoogleMutation()
   const navigate = useNavigate()
 
   const onSubmit = async (data: LoginType) => {
     try {
-      // console.log(await login(data).unwrap())
-
-      await axios.post('http://localhost:3000/user/login', data, {headers: {
-        'Content-Type': 'application/json'
-      }}).then((res) => {
-        if(res.data?.error)
+      await login(data).unwrap().then((res) => {
+        if(res.data.success.message){
           setAlert({
-            data: res.data?.error?.message,
-            type: 'error'
-          })
-        if(res.data?.success)
-          setAlert({
-            data: res.data?.success?.message,
+            data: res.data.success.message,
             type: 'success'
           })
-          login(res.data?.success?.token)
-      }).catch((err) => {
-        setAlert({
-          data: err.message,
-          type: 'error'
-        })
+          setTimeout(() => {
+            navigate('/home')
+          }, 1500)
+        }
+        if(res.data.error.message)
+          setAlert({
+            data: res.data.error.message,
+            type: 'error'
+          })
       })
     } catch (error) {
       setAlert({
@@ -63,7 +55,7 @@ export const Login: React.FC<Props> = ({setSelected}) => {
 
   const handleGoogleSignIn = async () => {
     try{
-      const result = await signInWithGoogle()
+      const result = await signInWithGoogleFirebase()
       const user = result.user
 
       const userData = {
@@ -71,28 +63,27 @@ export const Login: React.FC<Props> = ({setSelected}) => {
         email: user.email,
       }
 
-      const response = await axios.post('http://localhost:3000/user/sign-in-with-google', userData, {headers: {
-        'Content-Type': 'application/json'
-      }}).then((res) => {
-        if(res.data?.error)
+      await signInWithGoogle(userData).unwrap().then((res) => {
+        if(res.data.success.message){
           setAlert({
-            data: res.data?.error?.message,
-            type: 'error'
-          })
-        if(res.data?.success)
-          setAlert({
-            data: res.data?.success?.message,
+            data: res.data.success.message,
             type: 'success'
           })
-          login(res.data?.success?.token)
-      }).catch((err) => {
-        setAlert({
-          data: err.message,
-          type: 'error'
-        })
+          setTimeout(() => {
+            navigate('/home')
+          }, 1500)
+        }
+        if(res.data.error.message)
+          setAlert({
+            data: res.data.error.message,
+            type: 'error'
+          })
       })
     } catch (error) {
-      console.error(error);
+      setAlert({
+        data: 'Something went wrong',
+        type: 'error'
+      })
     }
   }
 
