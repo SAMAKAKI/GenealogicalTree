@@ -2,17 +2,12 @@ import {Tabs, Tab,} from "@nextui-org/react";
 import { Login } from "../../components/login";
 import { SignUp } from "../../components/sign-up";
 import { useState } from "react";
-import { useGuardAuth } from "../../providers/GuardAuthProvider";
 import { useNavigate } from "react-router-dom";
 
 
 export const Auth: React.FC = () => {
   const [ selected, setSelected ] = useState('login')
-  const { isAuthenticated } = useGuardAuth()
   const navigate = useNavigate()
-
-  if(isAuthenticated)
-    navigate('/home')
   
   return (
     <div className="w-1/2 mx-10 pt-10">

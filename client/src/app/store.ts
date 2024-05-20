@@ -3,15 +3,23 @@ import { api } from './services/api'
 import { listenerMiddleware } from './middleware/auth'
 import user from './slicers/userSlice'
 import { listenerGoogleMiddleware } from './middleware/authGoogle'
+import { loadStore, saveStore } from './utils/localStorageUtils'
+
+const preloadedState = loadStore()
 
 export const store = configureStore({
+  // preloadedState,
   reducer: {
     [api.reducerPath]: api.reducer,
     user
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(api.middleware).prepend(listenerMiddleware.middleware).prepend(listenerGoogleMiddleware.middleware)
-  }
+  },
+})
+
+store.subscribe(() => {
+  saveStore(store.getState())
 })
 
 export type AppStore = typeof store

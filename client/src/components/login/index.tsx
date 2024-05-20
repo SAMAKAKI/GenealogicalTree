@@ -5,7 +5,7 @@ import { Input } from '../input'
 import { FcGoogle } from 'react-icons/fc';
 import { Alert } from '../alert';
 import { signInWithGoogle as signInWithGoogleFirebase } from '../../config/firebase-config';
-import { useLoginMutation, useSignInWithGoogleMutation } from '../../app/services/userApi';
+import { useLazyGetCurrentQuery, useLoginMutation, useSignInWithGoogleMutation } from '../../app/services/userApi';
 import { AlertData, LoginType } from '../../types';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,6 +24,7 @@ export const Login: React.FC<Props> = ({setSelected}) => {
     }
   })
   const [login] = useLoginMutation()
+  const [triggerCurrentUser] = useLazyGetCurrentQuery()
   const [signInWithGoogle] = useSignInWithGoogleMutation()
   const navigate = useNavigate()
 
@@ -45,6 +46,7 @@ export const Login: React.FC<Props> = ({setSelected}) => {
             type: 'error'
           })
       })
+      await triggerCurrentUser().unwrap()
     } catch (error) {
       setAlert({
         data: 'Something went wrong',
@@ -79,6 +81,7 @@ export const Login: React.FC<Props> = ({setSelected}) => {
             type: 'error'
           })
       })
+      await triggerCurrentUser().unwrap()
     } catch (error) {
       setAlert({
         data: 'Something went wrong',

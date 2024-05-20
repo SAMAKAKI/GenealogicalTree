@@ -4,6 +4,7 @@ import { AdminService } from '../admin/admin.service';
 import { User } from 'src/interfaces/user.interface';
 import * as bcrypt from 'bcryptjs'
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class UserService {
@@ -157,5 +158,21 @@ export class UserService {
       return { data: { success: {message: ''}, error: { message: `An error occurred while logging the user ${error}` }}}
     }
     
+  }
+
+  async getCurrent(user: any){    
+    const firestore = this.adminService.getFirestore()
+    try {
+      const userCurrent = await firestore.collection('users').doc(user.id).get()
+      if(!userCurrent.data())
+        return { data: { success: { currentUserData: null }, error: { message: 'User not found' }}}
+      else{
+        const { password, ...rest } = userCurrent.data()
+
+        return { data: { success: { currentUserData: rest }, error: { message: '' }}}
+      }
+    } catch (error) {
+      return { data: { success: { currentUserData: null }, error: { message: error } } }
+    }
   }
 }

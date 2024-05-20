@@ -30,9 +30,15 @@ export const userApi = api.injectEndpoints({
         method: 'POST',
         body: userData
       })
+    }),
+    getCurrent: builder.query<{data: { success: { currentUserData: User }, error: { message: string } }}, void>({
+      query: () => ({
+        url: `/user/current`,
+        method: 'GET',
+      })
     })
   })
 })
 
-export const { useSignUpMutation, useLoginMutation, useSignUpWithGoogleMutation, useSignInWithGoogleMutation } = userApi
-export const { endpoints: { signUp, login, signUpWithGoogle, signInWithGoogle } } = userApi
+export const { useSignUpMutation, useLoginMutation, useSignUpWithGoogleMutation, useSignInWithGoogleMutation, useGetCurrentQuery, useLazyGetCurrentQuery } = userApi
+export const { endpoints: { signUp, login, signUpWithGoogle, signInWithGoogle, getCurrent } } = userApi
