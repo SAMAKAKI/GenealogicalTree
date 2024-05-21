@@ -9,6 +9,7 @@ export const Navbar: React.FC = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector(selectCurrentUser)
 
+
   const handleLinkClick = (path: string) => {
     navigate(path);
   };
@@ -18,10 +19,11 @@ export const Navbar: React.FC = () => {
     navigate('/auth')
   }
 
+
   return (
     <NavbarNext position="static">
       <NavbarBrand>
-        <img src="./images/logo.png" alt="logo" className="w-1/6" onClick={() => handleLinkClick('/home')}/>
+        <img src="/images/logo.png" alt="logo" className="w-1/6" onClick={() => handleLinkClick('/home')}/>
         <p onClick={() => handleLinkClick('/home')} className="font-bold text-inherit">Genealogical tree</p>
       </NavbarBrand>
 
