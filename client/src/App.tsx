@@ -11,11 +11,7 @@ function App() {
     <div>
       <Navbar/>
       <div style={{display: "flex"}} className="bg-[url('./images/logo.png')] ">
-        <div className=" bg-blue-200 h-screen w-1/5 bg-opacity-80" style={{ flex: 2.5}}>
-          <div className="m-10 bg-white h-5/6 w-5/6  bg-logo ">
-            <h2>your add xdd<p>or something else</p></h2>
-          </div>
-        </div>
+
 
         <div className=" bg-blue-200 h-screen w-3/5 bg-opacity-80" style={{ flex: 5 }}>
           <Routes>

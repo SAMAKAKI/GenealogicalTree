@@ -1,11 +1,14 @@
+
+import { Treediagram } from "../../components/treediagram"
+
 export const Tree: React.FC = () => {
 
     return (
       <>
   
-     
-      <h1>siema tu bedzie twoje drzewo :) pzdr</h1>
-      
+      <div>
+        <Treediagram/>
+      </div>
       </>
     )
   }
