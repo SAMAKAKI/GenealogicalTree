@@ -35,9 +35,9 @@ export const Navbar: React.FC = () => {
 
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="lg:flex">
+        { !user && (<NavbarItem className="lg:flex">
           <Button  color="primary" onClick={() => handleLinkClick('/auth')}>Login</Button>
-        </NavbarItem>
+        </NavbarItem>)}
         { user && (<NavbarItem>
         <NavbarContent as="div" justify="end">
         <Dropdown placement="bottom-end">
