@@ -1,27 +1,26 @@
 import { Route, Routes } from "react-router-dom"
-import { Auth } from "./pages/auth"
-import { Home } from "./pages/home"
-import { Navbar } from "./components/navbar"
-import { Tree } from "./pages/tree"
-import { Settings } from "./pages/settings"
+import { Settings, Home, Tree, Auth, About, ContactUs, ErrorPage } from "./pages"
+import { Footer, Navbar, Profile } from "./components"
 
 function App() {
 
   return (
-    <div>
+    <div className="">
       <Navbar/>
-      <div style={{display: "flex"}} className="bg-[url('./images/logo.png')] ">
-
-
-        <div className=" bg-blue-200 h-screen w-3/5 bg-opacity-80" style={{ flex: 5 }}>
-          <Routes>
-            <Route path="/auth"  element={<Auth />}/>
-            <Route path="/home" element={<Home/>}/>
-            <Route path="/tree" element={<Tree/>}/>
-            <Route path="/settings" element={<Settings/>}/>
-          </Routes>
-        </div>
+      <div className="container mx-auto">
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/auth"  element={<Auth />}/>
+          <Route path="/tree" element={<Tree/>}/>
+          <Route path="/about" element={<About/>}/>
+          <Route path="/contact-us" element={<ContactUs/>}/>
+          <Route path="/settings" element={<Settings/>}>
+            <Route path="profile" element={<Profile />} />
+          </Route>
+          <Route path="*" element={<ErrorPage/>}/>
+        </Routes>
       </div>
+      <Footer />
     </div>
   )
 }

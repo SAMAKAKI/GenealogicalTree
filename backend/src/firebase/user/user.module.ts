@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
-import { AdminService } from '../admin/admin.service';
 import { UserService } from './user.service';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv'
 import { JwtStrategy } from '../strategies/jwt.strategy';
+import { AdminService } from '../admin/admin.service';
 
 dotenv.config()
 @Module({
@@ -14,6 +14,6 @@ dotenv.config()
     signOptions: { expiresIn: '1h' }
   })],
   controllers: [UserController],
-  providers: [AdminService, UserService, JwtStrategy]
+  providers: [UserService, JwtStrategy, AdminService]
 })
 export class UserModule {}

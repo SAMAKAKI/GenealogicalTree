@@ -5,17 +5,29 @@ import * as serviceAccount from '../../config/genealogicaltree-6e0e2-firebase-ad
 
 @Injectable()
 export class AdminService implements OnModuleInit {
+  private firestore: FirebaseFirestore.Firestore;
+  private auth: admin.auth.Auth;
+  
   onModuleInit() {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-    });
+    if (!admin.apps.length) {
+      const firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+      });
+
+      this.firestore = firebaseApp.firestore();
+      this.auth = firebaseApp.auth();
+    } else {
+      const firebaseApp = admin.app(); // reuse the existing app
+      this.firestore = firebaseApp.firestore();
+      this.auth = firebaseApp.auth();
+    }
   }
 
-  getAuth() {
-    return admin.auth();
+  getFirestore(): admin.firestore.Firestore {
+    return this.firestore;
   }
 
-  getFirestore() {
-    return admin.firestore();
+  getAuth(): admin.auth.Auth {
+    return this.auth;
   }
 }

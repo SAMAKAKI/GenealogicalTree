@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Input as NextInput } from '@nextui-org/react'
-import React from 'react'
+import { button, Input as NextInput } from '@nextui-org/react'
+import React, { useState } from 'react'
 import { Control, useController } from 'react-hook-form'
+import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
 
 type Props = {
   name: string,
@@ -14,10 +15,12 @@ type Props = {
   endContent?: JSX.Element,
   maxLength?: number,
   minLength?: number,
-  pattern?: RegExp
+  pattern?: RegExp,
+  size?: 'sm' | 'md' | 'lg' | undefined
 }
 
-export const Input: React.FC<Props> = ({name, label, placeholder, type, control, required = true, endContent, maxLength, minLength, pattern}) => {
+export const Input: React.FC<Props> = ({name, label, placeholder, type = 'text', control, size, required = true, endContent, maxLength, minLength, pattern}) => {
+  const [inputType, setInputType] = useState<string>(type)
   const { field, fieldState: { invalid } } = useController({
     name,
     control,
@@ -29,9 +32,22 @@ export const Input: React.FC<Props> = ({name, label, placeholder, type, control,
     }
   })
 
+  const handleVisibility = () => {
+    setInputType(inputType === 'password' ? 'text' : 'password')
+  }
+
   return (
-    <>
-      <NextInput isRequired id={name} label={label} type={type} placeholder={placeholder} value={field.value} name={field.name} isInvalid={invalid} onChange={field.onChange} onBlur={field.onBlur}/>
-    </>
+    <div className='relative'>
+      { type === 'password' ? (
+        <>
+          <NextInput size={size} isRequired id={name} label={label} type={inputType} placeholder={placeholder} value={field.value} name={field.name} isInvalid={invalid} onChange={field.onChange} onBlur={field.onBlur}/>
+          <button type='button' className='absolute top-1/2 right-5' onClick={handleVisibility}>
+            {inputType === 'password' ? <MdVisibility className='text-xl text-[#006FEE]'/> : <MdVisibilityOff className='text-xl text-[#006FEE]'/>}
+          </button>
+        </>
+      ) : (
+        <NextInput size={size} isRequired id={name} label={label} type={type} placeholder={placeholder} value={field.value} name={field.name} isInvalid={invalid} onChange={field.onChange} onBlur={field.onBlur}/>
+      )}
+    </div>
   )
 }

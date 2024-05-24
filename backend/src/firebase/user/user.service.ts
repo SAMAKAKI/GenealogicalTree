@@ -1,16 +1,17 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { AdminService } from '../admin/admin.service';
 import { User } from 'src/interfaces/user.interface';
 import * as bcrypt from 'bcryptjs'
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { JwtPayload } from 'src/interfaces/jwt.interface';
 
 @Injectable()
 export class UserService {
   constructor(private readonly adminService: AdminService, private readonly jwtService: JwtService){}
 
-  async registerUser(data: User){
+  async registerUser(data: User): Promise<{data: {success: {message: string}, error: {message: string}}}>{
     const firestore = this.adminService.getFirestore();
 
     try{
@@ -48,7 +49,7 @@ export class UserService {
     }
   }
 
-  async loginUser(password: string, usernameOrEmail: string) {
+  async loginUser(password: string, usernameOrEmail: string): Promise<{data: {success: {message: string, token: string | null}, error: {message: string}}}> {
     const firestore = this.adminService.getFirestore();
 
     try {
@@ -58,7 +59,7 @@ export class UserService {
       const users = [...userUsername.docs, ...userEmail.docs]
 
       if(users.length === 0)
-        return { error: { message: "Incorrect email or username" } }
+        return { data: { success: { message: '', token: null}, error: { message: "Incorrect email or username" }}}
 
       const user = users[0]
 
@@ -78,14 +79,14 @@ export class UserService {
 
         return { data: {success: { message: "Successfully logged", token}, error: {message: ''}}}
       } else
-        return { data: { success: {message: ''}, error: { message: "Incorrect password try again" }}}
+        return { data: { success: {message: '', token: null}, error: { message: "Incorrect password try again" }}}
         
     } catch (error) {
-      return { data: { success: {message: ''}, error: { message: `An error occurred while logging the user ${error}` }}}
+      return { data: { success: {message: '', token: null}, error: { message: `An error occurred while logging the user ${error}` }}}
     }
   }
 
-  async signUpWithGoogle(data: User){
+  async signUpWithGoogle(data: User): Promise<{data: {success: {message: string}, error: {message: string}}}>{
     const firestore = this.adminService.getFirestore();
 
     try{
@@ -121,7 +122,7 @@ export class UserService {
     
   }
 
-  async signInWithGoogle(username: string, email: string){
+  async signInWithGoogle(username: string, email: string): Promise<{data: {success: {message: string, token: string | null}, error: {message: string}}}>{
     const firestore = this.adminService.getFirestore();
 
     try{
@@ -131,7 +132,7 @@ export class UserService {
       const users = [...userUsername.docs, ...userEmail.docs]
 
       if(users.length === 0)
-        return { data: { success: {message: ''}, error: { message: "Incorrect email or username" }}}
+        return { data: { success: {message: '', token: null}, error: { message: "Incorrect email or username" }}}
 
       const user = users[0]
 
@@ -152,15 +153,15 @@ export class UserService {
 
         return { data: {success: { message: "Successfully logged", token}, error: {message: ''}}}
       } else
-        return { data: { success: {message: ''}, error: { message: "Incorrect password try again" }}}
+        return { data: { success: {message: '', token: null}, error: { message: "Incorrect password try again" }}}
         
     } catch (error) {
-      return { data: { success: {message: ''}, error: { message: `An error occurred while logging the user ${error}` }}}
+      return { data: { success: {message: '', token: null}, error: { message: `An error occurred while logging the user ${error}` }}}
     }
     
   }
 
-  async getCurrent(user: any){    
+  async getCurrent(user: JwtPayload): Promise<{data: {success: {currentUserData: {[field: string]: string}}, error: {message: string}}}>{    
     const firestore = this.adminService.getFirestore()
     try {
       const userCurrent = await firestore.collection('users').doc(user.id).get()

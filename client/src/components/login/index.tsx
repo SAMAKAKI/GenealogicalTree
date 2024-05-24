@@ -37,7 +37,7 @@ export const Login: React.FC<Props> = ({setSelected}) => {
             type: 'success'
           })
           setTimeout(() => {
-            navigate('/home')
+            navigate('/')
           }, 1500)
         }
         if(res.data.error.message)
@@ -72,7 +72,7 @@ export const Login: React.FC<Props> = ({setSelected}) => {
             type: 'success'
           })
           setTimeout(() => {
-            navigate('/home')
+            navigate('/')
           }, 1500)
         }
         if(res.data.error.message)

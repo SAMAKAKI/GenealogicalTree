@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { logout, selectToken } from '../../app/slicers/userSlice'
+import { logout, selectIsAuthenticated, selectToken } from '../../app/slicers/userSlice'
 
 type GuardType = {
   isAuthentication: boolean,
@@ -11,9 +11,9 @@ type GuardType = {
 const GuardAuthContext = createContext<GuardType | undefined>(undefined)
 
 const GuardAuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-  const [isAuthentication, setIsAuthentication] = useState<boolean>(false)
+  const [isAuthentication, setIsAuthentication] = useState<boolean>(useAppSelector(selectIsAuthenticated))
   const dispatch = useAppDispatch()
-  const token = useAppSelector(selectToken)
+  const token = localStorage.getItem('token')
   
   useEffect(() => {
     if(token){
@@ -21,17 +21,16 @@ const GuardAuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) 
         const decoded = jwtDecode(token)
         const currentTime = Date.now() / 1000
 
-        if(decoded.exp > currentTime)
-          setIsAuthentication(true)
-        else{
+        if(decoded.exp < currentTime){
           setIsAuthentication(false)
           dispatch(logout())
-        }
+        } else
+          setIsAuthentication(true)
       } catch (error) {
         setIsAuthentication(false)
         dispatch(logout())
       }
-    } 
+    }
   }, [token])
 
   const logOut = () => {

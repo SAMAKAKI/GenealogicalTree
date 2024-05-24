@@ -14,3 +14,8 @@ export type SignUpForm = {
   password: string,
   rePassword: string,
 }
+
+export type ContactUsForm = {
+  title: string,
+  description: string
+}
